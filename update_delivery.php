@@ -2,7 +2,9 @@
 include 'config.php';
 
 $id = $_GET['id'];
-$status = $_GET['status'];
+
+// ALWAYS force correct status (no more broken values)
+$status = "Delivered";
 
 // get delivery info
 $delivery = mysqli_query($conn, "SELECT * FROM deliveries WHERE DelID=$id");
@@ -14,19 +16,16 @@ $qty = $data['DelQuan'];
 // update status
 mysqli_query($conn, "
     UPDATE deliveries 
-    SET DelStatus='$status' 
+    SET DelStatus='Delivered' 
     WHERE DelID=$id
 ");
 
-// ONLY deduct stock when Delivered
-if ($status == "Delivered") {
-
-    mysqli_query($conn, "
-        UPDATE products 
-        SET ProdStock = ProdStock - $qty 
-        WHERE ProdID = $prodid
-    ");
-}
+// reduce stock ONLY ONCE
+mysqli_query($conn, "
+    UPDATE products 
+    SET ProdStock = ProdStock - $qty 
+    WHERE ProdID = $prodid
+");
 
 header("Location: deliveries.php");
 exit();

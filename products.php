@@ -16,6 +16,23 @@ $result = mysqli_query($conn, "SELECT * FROM products");
 <title>Products</title>
 
 <style>
+
+.add-btn{
+    display:inline-block;
+    margin-bottom:15px;
+    padding:10px 15px;
+    background:#ff4fa3;
+    color:white;
+    text-decoration:none;
+    border-radius:8px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+.add-btn:hover{
+    background:#ff2f92;
+}
+
 body{
     font-family:Arial;
     margin:0;
@@ -91,18 +108,23 @@ tr:nth-child(even){
 <body>
 
 <div class="sidebar">
-    <h2>Hermes SIMS</h2>
-    <a href="dashboard.php">Dashboard</a>
-    <a href="products.php">Products</a>
-    <a href="deliveries.php">Deliveries</a>
-    <a href="logout.php">Logout</a>
+
+    <h2>🌸 Hermes SIMS</h2>
+
+    <a href="dashboard.php">🏠 Dashboard</a>
+    <a href="products.php">📦 Products</a>
+    <a href="deliveries.php">🚚 Deliveries</a>
+    <a href="logout.php">🚪 Logout</a>
+
 </div>
 
 <div class="main">
 
 <h2>Products</h2>
 
-<a class="btn" href="add_product.php">+ Add Product</a>
+<a href="add_product.php" class="add-btn">
+    ➕ Add Product
+</a>
 
 <table>
 <tr>

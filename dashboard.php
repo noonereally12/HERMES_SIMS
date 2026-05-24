@@ -7,144 +7,154 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-$products = mysqli_query($conn, "SELECT COUNT(*) AS total FROM products");
-$prodCount = mysqli_fetch_assoc($products)['total'];
+// counts for dashboard
+$products = mysqli_query($conn, "SELECT COUNT(*) as total FROM products");
+$productsCount = mysqli_fetch_assoc($products)['total'];
 
-$deliveries = mysqli_query($conn, "SELECT COUNT(*) AS total FROM deliveries");
-$delCount = mysqli_fetch_assoc($deliveries)['total'];
+$deliveries = mysqli_query($conn, "SELECT COUNT(*) as total FROM deliveries");
+$deliveriesCount = mysqli_fetch_assoc($deliveries)['total'];
 
-$pending = mysqli_query($conn, "SELECT COUNT(*) AS total FROM deliveries WHERE DelStatus='Pending'");
+$pending = mysqli_query($conn, "SELECT COUNT(*) as total FROM deliveries WHERE DelStatus='Pending'");
 $pendingCount = mysqli_fetch_assoc($pending)['total'];
 
-$delivered = mysqli_query($conn, "SELECT COUNT(*) AS total FROM deliveries WHERE DelStatus='Delivered'");
+$delivered = mysqli_query($conn, "SELECT COUNT(*) as total FROM deliveries WHERE DelStatus='Delivered'");
 $deliveredCount = mysqli_fetch_assoc($delivered)['total'];
-
-$lowstock = mysqli_query($conn, "SELECT COUNT(*) AS total FROM products WHERE ProdStock < 10");
-$lowStockCount = mysqli_fetch_assoc($lowstock)['total'];
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-<title>Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
 
-<style>
-body{
-    font-family:Arial;
-    margin:0;
-    display:flex;
-    background:linear-gradient(135deg,#ffe6f1,#ffd1e8);
-}
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            display:flex;
+            background:#ffe6f1;
+        }
 
-.sidebar{
-    width:240px;
-    height:100vh;
-    background:linear-gradient(180deg,#ff4fa3,#ff2f92);
-    color:white;
-    padding:20px;
-}
+        .sidebar{
+            width:220px;
+            height:100vh;
+            background:#ff4fa3;
+            color:white;
+            padding:20px;
+        }
 
-.sidebar h2{
-    text-align:center;
-}
+        .sidebar a{
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:10px;
+            margin-bottom:10px;
+            border-radius:8px;
+            background:rgba(255,255,255,0.2);
+        }
 
-.sidebar a{
-    display:block;
-    color:white;
-    text-decoration:none;
-    padding:12px;
-    margin:8px 0;
-    border-radius:10px;
-    background:rgba(255,255,255,0.15);
-}
+        .sidebar a:hover{
+            background:white;
+            color:#ff4fa3;
+        }
 
-.sidebar a:hover{
-    background:white;
-    color:#ff4fa3;
-}
+        .main{
+            flex:1;
+            padding:30px;
+        }
 
-.main{
-    flex:1;
-    padding:30px;
-}
+        h1{
+            color:#ff4fa3;
+            margin-bottom:20px;
+        }
 
-h1,h2{
-    color:#ff2f92;
-}
+        .cards{
+            display:grid;
+            grid-template-columns:repeat(4, 1fr);
+            gap:20px;
+            margin-top:20px;
+        }
 
-.cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:20px;
-}
+        .card{
+            background:white;
+            padding:20px;
+            border-radius:15px;
+            box-shadow:0 5px 15px rgba(0,0,0,0.1);
+            text-align:center;
+            transition:0.3s;
+        }
 
-.card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    text-align:center;
-    box-shadow:0 10px 20px rgba(0,0,0,0.1);
-    transition:0.3s;
-}
+        .card:hover{
+            transform:translateY(-5px);
+        }
 
-.card:hover{
-    transform:translateY(-5px);
-}
+        .card h2{
+            margin:0;
+            color:#ff4fa3;
+            font-size:18px;
+        }
 
-.card h3{
-    color:#ff4fa3;
-}
+        .card p{
+            font-size:28px;
+            font-weight:bold;
+            margin:10px 0 0;
+        }
 
-.number{
-    font-size:28px;
-    font-weight:bold;
-}
-</style>
+        /* responsive fix */
+        @media(max-width:900px){
+            .cards{
+                grid-template-columns:repeat(2, 1fr);
+            }
+        }
 
+        @media(max-width:500px){
+            .cards{
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-    <h2>Hermes SIMS</h2>
-    <a href="dashboard.php">Dashboard</a>
-    <a href="products.php">Products</a>
-    <a href="deliveries.php">Deliveries</a>
-    <a href="logout.php">Logout</a>
+
+    <h2>🌸 Hermes SIMS</h2>
+
+    <a href="dashboard.php">🏠 Dashboard</a>
+    <a href="products.php">📦 Products</a>
+    <a href="deliveries.php">🚚 Deliveries</a>
+    <a href="logout.php">🚪 Logout</a>
+
 </div>
 
 <div class="main">
 
-<h1>Welcome <?php echo $_SESSION['username']; ?> 💖</h1>
+    <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?> 👋</h1>
 
-<div class="cards">
+    <div class="cards">
 
-<div class="card">
-<h3>Products</h3>
-<div class="number"><?php echo $prodCount; ?></div>
-</div>
+        <div class="card">
+            <h2>📦 Products</h2>
+            <p><?php echo $productsCount; ?></p>
+        </div>
 
-<div class="card">
-<h3>Deliveries</h3>
-<div class="number"><?php echo $delCount; ?></div>
-</div>
+        <div class="card">
+            <h2>🚚 Deliveries</h2>
+            <p><?php echo $deliveriesCount; ?></p>
+        </div>
 
-<div class="card">
-<h3>Pending</h3>
-<div class="number"><?php echo $pendingCount; ?></div>
-</div>
+        <div class="card">
+            <h2>⏳ Pending</h2>
+            <p><?php echo $pendingCount; ?></p>
+        </div>
 
-<div class="card">
-<h3>Delivered</h3>
-<div class="number"><?php echo $deliveredCount; ?></div>
-</div>
+        <div class="card">
+            <h2>✅ Delivered</h2>
+            <p><?php echo $deliveredCount; ?></p>
+        </div>
 
-<div class="card">
-<h3>Low Stock</h3>
-<div class="number"><?php echo $lowStockCount; ?></div>
-</div>
-
-</div>
+    </div>
 
 </div>
 
