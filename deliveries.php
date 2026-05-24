@@ -45,11 +45,6 @@ $result = mysqli_query($conn, "
             background:rgba(255,255,255,0.2);
         }
 
-        .sidebar a:hover{
-            background:white;
-            color:#ff4fa3;
-        }
-
         .main{
             flex:1;
             padding:30px;
@@ -72,35 +67,18 @@ $result = mysqli_query($conn, "
             color:white;
         }
 
-        .btn{
-            display:inline-block;
-            margin-bottom:10px;
-            padding:10px 15px;
-            background:#ff4fa3;
-            color:white;
-            text-decoration:none;
-            border-radius:8px;
-        }
-
         .status{
             padding:5px 10px;
             border-radius:8px;
-            display:inline-block;
         }
 
-        .pending{
-            background:orange;
-            color:white;
-        }
+        .pending{ background:orange; color:white; }
+        .delivered{ background:green; color:white; }
 
-        .delivered{
-            background:green;
-            color:white;
-        }
-
-        select{
-            padding:5px;
-            border-radius:6px;
+        .delete-btn{
+            color:red;
+            text-decoration:none;
+            font-weight:bold;
         }
     </style>
 </head>
@@ -119,8 +97,6 @@ $result = mysqli_query($conn, "
 
     <h2>Deliveries</h2>
 
-    <a class="btn" href="add_delivery.php">+ Add Delivery</a>
-
     <table>
         <tr>
             <th>ID</th>
@@ -129,11 +105,11 @@ $result = mysqli_query($conn, "
             <th>Date</th>
             <th>Address</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
 
         <?php while($row = mysqli_fetch_assoc($result)) { ?>
         <tr>
-
             <td><?php echo $row['DelID']; ?></td>
             <td><?php echo $row['ProdName']; ?></td>
             <td><?php echo $row['DelQuan']; ?></td>
@@ -141,23 +117,17 @@ $result = mysqli_query($conn, "
             <td><?php echo $row['DelAdd']; ?></td>
 
             <td>
-                <form method="GET" action="update_delivery.php">
-                    <input type="hidden" name="id" value="<?php echo $row['DelID']; ?>">
+                <span class="status <?php echo strtolower($row['DelStatus']); ?>">
+                    <?php echo $row['DelStatus']; ?>
+                </span>
+            </td>
 
-                    <select name="status" onchange="this.form.submit()">
-
-                        <option value="Pending"
-                        <?php if($row['DelStatus']=="Pending") echo "selected"; ?>>
-                            Pending
-                        </option>
-
-                        <option value="Delivered"
-                        <?php if($row['DelStatus']=="Delivered") echo "selected"; ?>>
-                            Delivered
-                        </option>
-
-                    </select>
-                </form>
+            <td>
+                <a class="delete-btn"
+                   href="delete_delivery.php?id=<?php echo $row['DelID']; ?>"
+                   onclick="return confirm('Delete this delivery?')">
+                   Delete
+                </a>
             </td>
 
         </tr>
