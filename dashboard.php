@@ -20,8 +20,12 @@ $pendingCount = mysqli_fetch_assoc($pending)['total'];
 $delivered = mysqli_query($conn, "SELECT COUNT(*) as total FROM deliveries WHERE DelStatus='Delivered'");
 $deliveredCount = mysqli_fetch_assoc($delivered)['total'];
 
-$lowStockQuery = mysqli_query($conn, "SELECT * FROM products WHERE ProdStock <= 25");
 
+$upcomingDeliveryQuery = mysqli_query($conn, "SELECT deliveries.*, products.ProdName FROM deliveries
+     JOIN products ON deliveries.ProdID = products.ProdID WHERE deliveries.DelDate <= DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+     AND deliveries.DelDate >= CURDATE() AND deliveries.DelStatus = 'pending'");
+
+$lowStockQuery = mysqli_query($conn, "SELECT * FROM products WHERE ProdStock <= 25");
 $expQuery = mysqli_query($conn, "SELECT * FROM products WHERE ProdExp < DATE_ADD(CURDATE(), INTERVAL 7 DAY) AND ProdExp > CURDATE()");
 $expiredQuery = mysqli_query($conn, "SELECT * FROM products WHERE ProdExp <= CURDATE()");
 ?>
@@ -104,6 +108,11 @@ $expiredQuery = mysqli_query($conn, "SELECT * FROM products WHERE ProdExp <= CUR
         .expired{
             background:#cca0a5;
             color:#771821;
+        }
+
+        .delivery{
+            background:#f5a68d;
+            color:#721c24;
         }
 
         .logo-title{
@@ -241,6 +250,14 @@ $expiredQuery = mysqli_query($conn, "SELECT * FROM products WHERE ProdExp <= CUR
                 ❌ Expired:
                 <?php echo $exp['ProdName']; ?>
                 (<?php echo $exp['ProdExp']; ?>)
+            </div>
+        <?php } ?>
+
+        <?php while($del = mysqli_fetch_assoc($upcomingDeliveryQuery)) { ?>
+            <div class="alert delivery">
+                🚚 Near Delivery:
+                <?php echo $del['ProdName']; ?>
+                (<?php echo $del['DelDate']; ?>)
             </div>
         <?php } ?>
 
