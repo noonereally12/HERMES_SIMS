@@ -7,6 +7,16 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+if ($_SESSION['role'] != 'admin') {
+
+    echo "<h2 style='color:red; text-align:center; margin-top:50px;'>
+            Access Denied: Admin Only
+          </h2>";
+
+    exit();
+}
+
+
 if (isset($_POST['add'])) {
 
     $name = $_POST['name'];
@@ -24,6 +34,7 @@ if (isset($_POST['add'])) {
     exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
