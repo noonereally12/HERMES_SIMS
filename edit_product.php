@@ -14,21 +14,36 @@ $row = mysqli_fetch_assoc($result);
 
 if (isset($_POST['update'])) {
 
-    $name = $_POST['name'];
     $stock = $_POST['stock'];
-    $exp = $_POST['exp'];
-    $supp = $_POST['supp'];
-    $price = $_POST['price'];
 
-    mysqli_query($conn, "
-        UPDATE products SET
-        ProdName='$name',
-        ProdStock='$stock',
-        ProdExp='$exp',
-        ProdSupp='$supp',
-        ProdPrice='$price'
-        WHERE ProdID=$id
-    ");
+    // STAFF ACCESS
+    if ($_SESSION['role'] == 'staff') {
+
+        mysqli_query($conn, "
+            UPDATE products SET
+            ProdStock='$stock'
+            WHERE ProdID=$id
+        ");
+    }
+
+    // ADMIN ACCESS
+    else if ($_SESSION['role'] == 'admin') {
+
+        $name = $_POST['name'];
+        $exp = $_POST['exp'];
+        $supp = $_POST['supp'];
+        $price = $_POST['price'];
+
+        mysqli_query($conn, "
+            UPDATE products SET
+            ProdName='$name',
+            ProdStock='$stock',
+            ProdExp='$exp',
+            ProdSupp='$supp',
+            ProdPrice='$price'
+            WHERE ProdID=$id
+        ");
+    }
 
     header("Location: products.php");
     exit();
@@ -98,11 +113,36 @@ if (isset($_POST['update'])) {
 
     <form method="POST">
 
-        <input type="text" name="name" value="<?php echo $row['ProdName']; ?>" required>
-        <input type="number" name="stock" value="<?php echo $row['ProdStock']; ?>" required>
-        <input type="date" name="exp" value="<?php echo $row['ProdExp']; ?>" required>
-        <input type="text" name="supp" value="<?php echo $row['ProdSupp']; ?>" required>
-        <input type="number" name="price" value="<?php echo $row['ProdPrice']; ?>" required>
+        <?php $role = $_SESSION['role']; ?>
+
+<input type="text"
+       name="name"
+       value="<?php echo $row['ProdName']; ?>"
+       required
+       <?php if ($role == 'staff') echo 'readonly'; ?>>
+
+<input type="number"
+       name="stock"
+       value="<?php echo $row['ProdStock']; ?>"
+       required>
+
+<input type="date"
+       name="exp"
+       value="<?php echo $row['ProdExp']; ?>"
+       required
+       <?php if ($role == 'staff') echo 'readonly'; ?>>
+
+<input type="text"
+       name="supp"
+       value="<?php echo $row['ProdSupp']; ?>"
+       required
+       <?php if ($role == 'staff') echo 'readonly'; ?>>
+
+<input type="number"
+       name="price"
+       value="<?php echo $row['ProdPrice']; ?>"
+       required
+       <?php if ($role == 'staff') echo 'readonly'; ?>>
 
         <button type="submit" name="update">Update Product</button>
 
