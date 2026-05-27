@@ -76,6 +76,25 @@ $result = mysqli_query($conn, "
             padding:30px;
         }
 
+        .logo-title{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:10px;
+        }
+
+        .logo{
+
+            width:40px;
+            height:40px;
+
+            border-radius:50%;
+
+            object-fit:cover;
+        }
+
         table{
             width:100%;
             border-collapse:collapse;
@@ -138,7 +157,12 @@ $result = mysqli_query($conn, "
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-    <h2>🌸 Hermes SIMS</h2>
+    
+<h2 class="logo-title">
+    <img src="images/HERMES.png" class="logo">
+    Hermes SIMS
+</h2>
+
     <a href="dashboard.php">🏠 Dashboard</a>
     <a href="products.php">📦 Products</a>
     <a href="deliveries.php">🚚 Deliveries</a>
@@ -157,7 +181,6 @@ $result = mysqli_query($conn, "
 
     <table>
         <tr>
-            <th>ID</th>
             <th>Product</th>
             <th>Quantity</th>
             <th>Date</th>
@@ -169,7 +192,6 @@ $result = mysqli_query($conn, "
         <?php while($row = mysqli_fetch_assoc($result)) { ?>
         <tr>
 
-            <td><?php echo $row['DelID']; ?></td>
             <td><?php echo $row['ProdName']; ?></td>
             <td><?php echo $row['DelQuan']; ?></td>
             <td><?php echo $row['DelDate']; ?></td>
