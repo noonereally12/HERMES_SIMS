@@ -7,8 +7,28 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-$result = mysqli_query($conn, "SELECT * FROM products");
+if (isset($_GET['search'])) {
+
+    $search = $_GET['search'];
+
+    $query = "
+        SELECT * FROM products
+        WHERE ProdName LIKE '%$search%'
+        ORDER BY ProdName ASC
+    ";
+}
+else {
+
+    $query = "
+        SELECT * FROM products
+        ORDER BY ProdName ASC
+    ";
+}
+
+$result = mysqli_query($conn, $query);
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -78,6 +98,53 @@ body{
     margin-bottom:10px;
 }
 
+.search-box{
+
+    width:250px;
+
+    padding:10px;
+
+    border-radius:8px;
+
+    border:1px solid #ccc;
+
+    margin-bottom:15px;
+}
+
+.search-btn{
+
+    padding:10px 15px;
+
+    background:#ff4fa3;
+
+    color:white;
+
+    border:none;
+
+    border-radius:8px;
+
+    cursor:pointer;
+}
+
+.logo-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+.logo{
+
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+}
+
 table{
     width:100%;
     background:white;
@@ -101,6 +168,16 @@ td{
 tr:nth-child(even){
     background:#fff5fa;
 }
+
+.expired{
+    color:red;
+    font-weight:bold;
+}
+
+.expiry{
+    color:orange;
+    font-weight:bold;
+}
 </style>
 
 </head>
@@ -109,7 +186,10 @@ tr:nth-child(even){
 
 <div class="sidebar">
 
-    <h2>🌸 Hermes SIMS</h2>
+    <h2 class="logo-title">
+        <img src="images/HERMES.png" class="logo">
+        Hermes SIMS
+    </h2>
 
     <a href="dashboard.php">🏠 Dashboard</a>
     <a href="products.php">📦 Products</a>
@@ -126,9 +206,25 @@ tr:nth-child(even){
     ➕ Add Product
 </a>
 
+<form method="GET">
+
+    <input type="text"
+           name="search"
+           class="search-box"
+           placeholder="Search product...">
+
+    <button type="submit"
+            class="search-btn">
+
+        Search
+
+    </button>
+
+</form>
+
 <table>
 <tr>
-<th>ID</th>
+
 <th>Name</th>
 <th>Stock</th>
 <th>Expiry</th>
@@ -137,12 +233,49 @@ tr:nth-child(even){
 <th>Action</th>
 </tr>
 
+
+
 <?php while($row = mysqli_fetch_assoc($result)) { ?>
 <tr>
-<td><?php echo $row['ProdID']; ?></td>
+
+
 <td><?php echo $row['ProdName']; ?></td>
-<td><?php echo $row['ProdStock']; ?></td>
-<td><?php echo $row['ProdExp']; ?></td>
+
+<td style="<?php echo ($row['ProdStock'] <= 25) ? 'color:red; font-weight:bold;' : 'color:black;'; ?>">
+    <?php echo $row['ProdStock']; ?>
+</td>
+
+<?php
+
+$today = date('Y-m-d');
+$Expiry = date('Y-m-d', strtotime('+7 days'));
+
+$expDate = $row['ProdExp'];
+
+if ($expDate <= $today) {
+
+    echo "<td class='expired'>
+            $expDate
+          </td>";
+
+}
+else if ($expDate < $Expiry) {
+
+    echo "<td class='expiry'>
+            $expDate
+          </td>";
+
+}
+else {
+
+    echo "<td>
+            $expDate
+          </td>";
+}
+?>
+
+
+
 <td><?php echo $row['ProdSupp']; ?></td>
 <td><?php echo $row['ProdPrice']; ?></td>
 
